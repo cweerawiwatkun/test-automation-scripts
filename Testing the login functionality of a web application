@@ -1,0 +1,41 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import time
+
+# Initialize WebDriver (ใช้ Chrome WebDriver)
+driver = webdriver.Chrome()
+
+# เปิดหน้าเว็บที่ต้องการทดสอบ
+driver.get("https://example.com/login")
+
+# รอให้หน้าเว็บโหลด
+time.sleep(3)
+
+# หาธาตุของฟิลด์ "Username" และ "Password" แล้วใส่ข้อมูลทดสอบ
+username = driver.find_element(By.NAME, "username")
+password = driver.find_element(By.NAME, "password")
+
+username.send_keys("testuser")  # ใส่ Username ทดสอบ
+password.send_keys("testpassword")  # ใส่ Password ทดสอบ
+
+# คลิกปุ่ม "Login"
+login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
+login_button.click()
+
+# รอโหลดหน้าใหม่
+time.sleep(3)
+
+# ตรวจสอบว่าเข้าสู่ระบบสำเร็จหรือไม่ โดยการเช็คข้อความยืนยันหลังจาก Login
+try:
+    welcome_message = driver.find_element(By.XPATH, "//div[contains(text(), 'Welcome')]")
+    assert welcome_message.is_displayed(), "Login Failed: Welcome message not displayed"
+    print("Login Test Passed: Welcome message displayed")
+except AssertionError as e:
+    print(e)
+
+# ถ่ายภาพหน้าจอหลังการทดสอบ
+driver.save_screenshot("login_test_result.png")
+
+# ปิดเบราว์เซอร์
+driver.quit()
